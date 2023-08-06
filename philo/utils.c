@@ -1,27 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/08/06 15:14:07 by bcastelo         ###   ########.fr       */
+/*   Created: 2023/08/06 15:03:52 by bcastelo          #+#    #+#             */
+/*   Updated: 2023/08/06 15:10:08 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	main(void)
+unsigned long	get_current_time(void)
 {
-	unsigned long	first;
-	unsigned long	second;
-	unsigned long	diff;
+	struct timeval	tv;
+	unsigned long	milliseconds;
 
-	first = get_current_time();
-	usleep(100000);
-	second = get_current_time();
-	diff = second - first;
-	printf("Let's think! %lu\n", diff);
-	return (0);
+	gettimeofday(&tv, NULL);
+	milliseconds = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+	return (milliseconds);
 }

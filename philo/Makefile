@@ -1,7 +1,7 @@
 NAME = philo
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
-SRC = philosophers
+SRC = philosophers utils
 LIBS = -pthread
 
 RED = \033[0;91m
