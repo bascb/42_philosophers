@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/04 10:12:54 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/04 14:36:04 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,19 @@
 
 int	main(int argc, char **argv)
 {
-	unsigned char	*forks;
+	t_params		*params;
 	unsigned long	first;
 	unsigned long	second;
 	unsigned long	diff;
 
-	(void) forks;
 	if (argc < 5)
 	{
 		print_help(argv);
 		return (0);
 	}
+	params = get_params(argc, argv);
+	if (params == NULL)
+		return (0);
 	first = get_current_time();
 	usleep(100000);
 	second = get_current_time();

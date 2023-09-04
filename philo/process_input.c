@@ -6,38 +6,28 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/04 10:14:06 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/04 17:16:22 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	check_all_digits(char *str)
-{
-	int	i;
+int	check_all_digits(char *str);
 
-	i = 0;
-	while (str[i])
+int	check_params(int argc, char **argv);
+
+int	get_nbr_of_philos(t_params *params, char *str)
+{
+	unsigned int	nbr;
+
+	nbr = ft_atou(str);
+	if (nbr > 200)
 	{
-		if (str[i] < '0' || str[i] > '9')
-			return (0);
-		i++;
+		printf("Number of philosophers (%d) exceeds the limit of 200\n", nbr);
+		return (0);
 	}
+	params->nbr_of_philos = nbr;
 	return (1);
-}
-
-int	check_params(int argc, char **argv)
-{
-	int	i;
-
-	i = 1;
-	while (i < argc)
-	{
-		if (!check_all_digits(argv[i]))
-			return (-1);
-		i++;
-	}
-	return (0);
 }
 
 t_params	*get_params(int argc, char **argv)
@@ -49,6 +39,7 @@ t_params	*get_params(int argc, char **argv)
 	params = ft_calloc(1, sizeof(t_params));
 	if (params == NULL)
 		return (NULL);
-	params->nbr_of_philos = ft_atou(argv[1]);
+	if (!get_nbr_of_philos(params, argv[1]))
+		return (NULL);
 	return (params);
 }
