@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/08/13 12:49:04 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/04 10:14:59 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ unsigned long	get_current_time(void);
 
 void			*ft_calloc(size_t nmemb, size_t size);
 
-int				get_params(int argc, char **argv);
+t_params		*get_params(int argc, char **argv);
 
 unsigned int	ft_atou(const char *num_str);
 

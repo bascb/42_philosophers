@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/08/13 12:21:56 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/04 10:12:54 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	main(int argc, char **argv)
 	unsigned long	second;
 	unsigned long	diff;
 
+	(void) forks;
 	if (argc < 5)
 	{
 		print_help(argv);
