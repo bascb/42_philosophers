@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/05 00:04:36 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/05 15:07:28 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ int	main(int argc, char **argv)
 	while (i < params->nbr_of_philos)
 	{
 		set_philo_data(params, i);
+		pthread_create(&params->philosophers[i].id, NULL,
+			manage_gathering, &params->philosophers[i]);
+		pthread_join(params->philosophers[i].id, &params->philosophers[i].res);
 		i++;
 	}
 	clean_params(params);

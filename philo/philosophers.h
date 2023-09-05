@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/05 00:05:07 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/05 15:01:39 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ typedef struct s_limits
 typedef struct s_philo
 {
 	unsigned int	philo_nbr;
+	pthread_t		id;
+	void			*res;
 	unsigned int	nbr_of_philos;
 	t_limits		*limits;
 	unsigned int	*forks;
@@ -47,6 +49,8 @@ typedef struct s_params
 	unsigned int	*forks;
 	t_philo			*philosophers;
 }					t_params;
+
+void			*manage_gathering(void *arg);
 
 unsigned long	get_current_time(void);
 
