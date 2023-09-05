@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/04 14:36:04 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/05 00:04:36 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,24 @@
 int	main(int argc, char **argv)
 {
 	t_params		*params;
-	unsigned long	first;
-	unsigned long	second;
-	unsigned long	diff;
+	unsigned int	i;
 
-	if (argc < 5)
+	if (argc != 5 && argc != 6)
 	{
 		print_help(argv);
 		return (0);
 	}
 	params = get_params(argc, argv);
 	if (params == NULL)
-		return (0);
-	first = get_current_time();
-	usleep(100000);
-	second = get_current_time();
-	diff = second - first;
-	printf("Let's think! %lu\n", diff);
+		return (1);
+	params->limits->start_time = get_current_time();
+	i = 0;
+	while (i < params->nbr_of_philos)
+	{
+		set_philo_data(params, i);
+		i++;
+	}
+	clean_params(params);
 	return (0);
 }
 

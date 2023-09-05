@@ -1,7 +1,7 @@
 NAME = philo
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
-SRC = philosophers utils process_input check_input
+SRC = philosophers utils process_input check_input clean_memory
 LIBS = -pthread
 
 RED = \033[0;91m
