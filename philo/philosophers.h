@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/05 15:01:39 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/06 14:02:39 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_philo
 	pthread_t		id;
 	void			*res;
 	unsigned int	nbr_of_philos;
+	unsigned int	*sim_state;
 	t_limits		*limits;
 	unsigned int	*forks;
 	unsigned long	last_eat_start;
@@ -46,9 +47,12 @@ typedef struct s_params
 	t_limits		*limits;
 	unsigned int	nbr_of_philos;
 	unsigned int	meals_nbr;
+	unsigned int	sim_state;
 	unsigned int	*forks;
 	t_philo			*philosophers;
 }					t_params;
+
+void			create_philosophers(t_params *params);
 
 void			*manage_gathering(void *arg);
 

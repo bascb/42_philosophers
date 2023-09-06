@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/05 15:07:28 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/06 14:05:15 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	main(int argc, char **argv)
 {
 	t_params		*params;
-	unsigned int	i;
 
 	if (argc != 5 && argc != 6)
 	{
@@ -25,18 +24,31 @@ int	main(int argc, char **argv)
 	params = get_params(argc, argv);
 	if (params == NULL)
 		return (1);
-	params->limits->start_time = get_current_time();
+	create_philosophers(params);
+	clean_params(params);
+	return (0);
+}
+
+void	create_philosophers(t_params *params)
+{
+	unsigned int	i;
+
 	i = 0;
 	while (i < params->nbr_of_philos)
 	{
 		set_philo_data(params, i);
 		pthread_create(&params->philosophers[i].id, NULL,
 			manage_gathering, &params->philosophers[i]);
-		pthread_join(params->philosophers[i].id, &params->philosophers[i].res);
 		i++;
 	}
-	clean_params(params);
-	return (0);
+	params->sim_state = 1;
+	params->limits->start_time = get_current_time();
+	i = 0;
+	while (i < params->nbr_of_philos)
+	{
+		pthread_join(params->philosophers[i].id, params->philosophers[i].res);
+		i++;
+	}
 }
 
 void	print_help(char **argv)
