@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 17:03:49 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/04 17:04:13 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/28 07:52:50 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,21 @@ int	check_params(int argc, char **argv)
 		i++;
 	}
 	return (0);
+}
+
+void	print_help(char **argv)
+{
+	char	*help[5];
+	int		i;
+
+	help[0] = "number_of_philosophers";
+	help[1] = "time_to_die";
+	help[2] = "time_to_eat";
+	help[3] = "time_to_sleep";
+	help[4] = "[number_of_times_each_philosopher_must_eat]";
+	printf("usage: %s", argv[0]);
+	i = 0;
+	while (i < 5)
+		printf(" %s", help[i++]);
+	printf("\n");
 }

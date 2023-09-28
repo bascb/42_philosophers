@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/06 14:05:15 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/28 08:19:47 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main(int argc, char **argv)
 	if (params == NULL)
 		return (1);
 	create_philosophers(params);
+	run_simulation(params);
 	clean_params(params);
 	return (0);
 }
@@ -41,29 +42,40 @@ void	create_philosophers(t_params *params)
 			manage_gathering, &params->philosophers[i]);
 		i++;
 	}
-	params->sim_state = 1;
-	params->limits->start_time = get_current_time();
 	i = 0;
 	while (i < params->nbr_of_philos)
-	{
-		pthread_join(params->philosophers[i].id, params->philosophers[i].res);
-		i++;
-	}
+		pthread_mutex_init(&params->forks[i++], NULL);
+	pthread_mutex_lock(&params->mtx);
+	params->sim_state = 1;
+	params->limits->start_time = get_current_time();
+	pthread_mutex_unlock(&params->mtx);
 }
 
-void	print_help(char **argv)
+void	run_simulation(t_params *params)
 {
-	char	*help[5];
-	int		i;
+	unsigned int	i;
+	int				philo_died;
 
-	help[0] = "number_of_philosophers";
-	help[1] = "time_to_die";
-	help[2] = "time_to_eat";
-	help[3] = "time_to_sleep";
-	help[4] = "[number_of_times_each_philosopher_must_eat]";
-	printf("usage: %s", argv[0]);
-	i = 0;
-	while (i < 5)
-		printf(" %s", help[i++]);
-	printf("\n");
+	philo_died = 0;
+	while (!philo_died)
+	{
+		usleep(1000);
+		i = -1;
+		while (++i < params->nbr_of_philos)
+		{
+			if (!is_alive(params->philosophers[i].last_eat_start,
+					params->limits->time_to_die))
+			{
+				print_log(&params->philosophers[i], "died");
+				philo_died = 1;
+				break ;
+			}
+		}
+	}
+	pthread_mutex_lock(&params->mtx);
+	params->sim_state = 0;
+	pthread_mutex_unlock(&params->mtx);
+	i = -1;
+	while (++i < params->nbr_of_philos)
+		pthread_join(params->philosophers[i].id, params->philosophers[i].res);
 }

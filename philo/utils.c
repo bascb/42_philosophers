@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 15:03:52 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/08/13 12:21:47 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/27 21:57:39 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,16 @@ unsigned long	get_current_time(void)
 	gettimeofday(&tv, NULL);
 	milliseconds = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
 	return (milliseconds);
+}
+
+int	check_timeout(unsigned long start, unsigned long timeout)
+{
+	unsigned long	now;
+
+	now = get_current_time();
+	if (now <= start + timeout)
+		return (0);
+	return (1);
 }
 
 void	*ft_calloc(size_t nmemb, size_t size)

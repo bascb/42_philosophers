@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/06 14:04:00 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/27 20:38:13 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@ int	check_params(int argc, char **argv);
 int	get_nbr_of_philos(t_params *params, char *str)
 {
 	params->nbr_of_philos = ft_atou(str);
+	if (!params->nbr_of_philos)
+		return (0);
 	if (params->nbr_of_philos > 200)
 	{
 		printf("Number of philosophers (%d) exceeds the limit of 200\n",
 			params->nbr_of_philos);
-		clean_params(params);
 		return (0);
 	}
 	return (1);
@@ -47,7 +48,7 @@ int	get_limits(t_params *params, char **argv)
 int	create_philo_fork_arrays(t_params *params)
 {
 	params->philosophers = ft_calloc(params->nbr_of_philos, sizeof(t_philo));
-	params->forks = ft_calloc(params->nbr_of_philos, sizeof(unsigned int));
+	params->forks = ft_calloc(params->nbr_of_philos, sizeof(pthread_mutex_t));
 	if (!params->philosophers || !params->forks)
 	{
 		printf("Unable to alloc memory for forks or philosophers\n");
@@ -67,13 +68,15 @@ t_params	*get_params(int argc, char **argv)
 	if (params == NULL)
 		return (NULL);
 	if (!get_nbr_of_philos(params, argv[1]))
-		return (NULL);
+		return (clean_params(params));
 	if (!get_limits(params, argv))
-		return (NULL);
+		return (clean_params(params));
 	if (argc == 6)
 		params->meals_nbr = ft_atou(argv[5]);
 	if (!create_philo_fork_arrays(params))
-		return (NULL);
+		return (clean_params(params));
+	if (pthread_mutex_init(&params->mtx, NULL))
+		return (clean_params(params));
 	return (params);
 }
 
@@ -83,6 +86,14 @@ void	set_philo_data(t_params *params, int i)
 	params->philosophers[i].nbr_of_philos = params->nbr_of_philos;
 	params->philosophers[i].sim_state = &params->sim_state;
 	params->philosophers[i].limits = params->limits;
-	params->philosophers[i].forks = params->forks;
+	if (params->nbr_of_philos > 1)
+	{
+		if (i + 1 == (int) params->nbr_of_philos)
+			params->philosophers[i].right = &params->forks[0];
+		else
+			params->philosophers[i].right = &params->forks[i + 1];
+		params->philosophers[i].left = &params->forks[i];
+	}
 	params->philosophers[i].meals_nbr = params->meals_nbr;
+	params->philosophers[i].mtx = &params->mtx;
 }
