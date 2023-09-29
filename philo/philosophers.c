@@ -6,11 +6,13 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/28 08:19:47 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/28 22:53:07 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+int	stop_simulation(t_params *params);
 
 int	main(int argc, char **argv)
 {
@@ -25,7 +27,7 @@ int	main(int argc, char **argv)
 	if (params == NULL)
 		return (1);
 	create_philosophers(params);
-	run_simulation(params);
+	control_simulation(params);
 	clean_params(params);
 	return (0);
 }
@@ -51,26 +53,16 @@ void	create_philosophers(t_params *params)
 	pthread_mutex_unlock(&params->mtx);
 }
 
-void	run_simulation(t_params *params)
+void	control_simulation(t_params *params)
 {
 	unsigned int	i;
-	int				philo_died;
+	int				stop_sim;
 
-	philo_died = 0;
-	while (!philo_died)
+	stop_sim = 0;
+	while (!stop_sim)
 	{
 		usleep(1000);
-		i = -1;
-		while (++i < params->nbr_of_philos)
-		{
-			if (!is_alive(params->philosophers[i].last_eat_start,
-					params->limits->time_to_die))
-			{
-				print_log(&params->philosophers[i], "died");
-				philo_died = 1;
-				break ;
-			}
-		}
+		stop_sim = stop_simulation(params);
 	}
 	pthread_mutex_lock(&params->mtx);
 	params->sim_state = 0;
@@ -78,4 +70,31 @@ void	run_simulation(t_params *params)
 	i = -1;
 	while (++i < params->nbr_of_philos)
 		pthread_join(params->philosophers[i].id, params->philosophers[i].res);
+}
+
+int	stop_simulation(t_params *params)
+{
+	unsigned int	i;
+	unsigned int	meals_completed;
+
+	meals_completed = 0;
+	if (params->meals_nbr)
+		meals_completed = 1;
+	i = 0;
+	while (i < params->nbr_of_philos)
+	{
+		if (!is_alive(params->philosophers[i].last_eat_start,
+				params->limits->time_to_die))
+		{
+			print_log(&params->philosophers[i], "died");
+			return (1);
+		}
+		if (params->meals_nbr)
+		{
+			if (params->philosophers[i].meals_nbr < params->meals_nbr)
+				meals_completed = 0;
+		}
+		i++;
+	}
+	return (meals_completed);
 }

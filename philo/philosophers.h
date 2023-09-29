@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/27 20:57:30 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/28 21:57:51 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_params
 
 void			create_philosophers(t_params *params);
 
-void			run_simulation(t_params *params);
+void			control_simulation(t_params *params);
 
 void			*manage_gathering(void *arg);
 

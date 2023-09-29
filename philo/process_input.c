@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/27 20:38:13 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/09/28 22:52:01 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,5 @@ void	set_philo_data(t_params *params, int i)
 			params->philosophers[i].right = &params->forks[i + 1];
 		params->philosophers[i].left = &params->forks[i];
 	}
-	params->philosophers[i].meals_nbr = params->meals_nbr;
 	params->philosophers[i].mtx = &params->mtx;
 }
