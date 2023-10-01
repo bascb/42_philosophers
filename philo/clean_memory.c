@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 17:24:04 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/29 07:36:47 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/01 10:21:44 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,14 @@ void	set_sim_state(t_philo *data, int state)
 	pthread_mutex_lock(data->mtx);
 	*data->sim_state = state;
 	pthread_mutex_unlock(data->mtx);
+}
+
+unsigned long	get_sim_start(t_philo *data)
+{
+	unsigned long	start;
+
+	pthread_mutex_lock(data->mtx);
+	start = data->limits->start_time;
+	pthread_mutex_unlock(data->mtx);
+	return (start);
 }

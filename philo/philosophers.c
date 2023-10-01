@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/28 22:53:07 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/01 11:51:21 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,17 @@ void	create_philosophers(t_params *params)
 
 	i = 0;
 	while (i < params->nbr_of_philos)
+		pthread_mutex_init(&params->forks[i++], NULL);
+	i = 0;
+	while (i < params->nbr_of_philos)
+		set_philo_data(params, i++);
+	i = 0;
+	while (i < params->nbr_of_philos)
 	{
-		set_philo_data(params, i);
 		pthread_create(&params->philosophers[i].id, NULL,
 			manage_gathering, &params->philosophers[i]);
 		i++;
 	}
-	i = 0;
-	while (i < params->nbr_of_philos)
-		pthread_mutex_init(&params->forks[i++], NULL);
 	pthread_mutex_lock(&params->mtx);
 	params->sim_state = 1;
 	params->limits->start_time = get_current_time();
@@ -76,25 +78,26 @@ int	stop_simulation(t_params *params)
 {
 	unsigned int	i;
 	unsigned int	meals_completed;
+	unsigned int	meals_nbr;
+	unsigned long	last_eat;
 
 	meals_completed = 0;
 	if (params->meals_nbr)
 		meals_completed = 1;
-	i = 0;
-	while (i < params->nbr_of_philos)
+	i = -1;
+	while (++i < params->nbr_of_philos)
 	{
-		if (!is_alive(params->philosophers[i].last_eat_start,
-				params->limits->time_to_die))
+		pthread_mutex_lock(&params->mtx);
+		last_eat = params->philosophers[i].last_eat_start;
+		meals_nbr = params->philosophers[i].meals_nbr;
+		pthread_mutex_unlock(&params->mtx);
+		if (!is_alive(last_eat, params->limits->time_to_die))
 		{
 			print_log(&params->philosophers[i], "died");
 			return (1);
 		}
-		if (params->meals_nbr)
-		{
-			if (params->philosophers[i].meals_nbr < params->meals_nbr)
-				meals_completed = 0;
-		}
-		i++;
+		if (params->meals_nbr && meals_nbr < params->meals_nbr)
+			meals_completed = 0;
 	}
 	return (meals_completed);
 }

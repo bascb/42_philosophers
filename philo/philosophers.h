@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/28 21:57:51 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/01 10:48:21 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@ typedef struct s_philo
 	t_limits			*limits;
 	pthread_mutex_t		*right;
 	pthread_mutex_t		*left;
+	unsigned long		start_time;
+	unsigned long		time_to_die;
+	unsigned long		time_to_eat;
+	unsigned long		time_to_sleep;
 	unsigned long		last_eat_start;
 	unsigned long		last_sleep_start;
 	unsigned int		meals_nbr;

@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/28 22:52:01 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/01 10:17:58 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ void	set_philo_data(t_params *params, int i)
 	params->philosophers[i].nbr_of_philos = params->nbr_of_philos;
 	params->philosophers[i].sim_state = &params->sim_state;
 	params->philosophers[i].limits = params->limits;
+	params->philosophers[i].time_to_die = params->limits->time_to_die;
+	params->philosophers[i].time_to_eat = params->limits->time_to_eat;
+	params->philosophers[i].time_to_sleep = params->limits->time_to_sleep;
 	if (params->nbr_of_philos > 1)
 	{
 		if (i + 1 == (int) params->nbr_of_philos)

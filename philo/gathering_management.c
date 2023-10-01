@@ -6,21 +6,23 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 14:37:59 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/29 07:55:12 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/01 11:34:28 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int		get_sim_state(t_philo *data);
+int				get_sim_state(t_philo *data);
 
-void	set_sim_state(t_philo *data, int state);
+void			set_sim_state(t_philo *data, int state);
 
-void	go_eat(t_philo *data);
+unsigned long	get_sim_start(t_philo *data);
 
-void	go_sleep(t_philo *data);
+void			go_eat(t_philo *data);
 
-void	go_think(t_philo *data);
+void			go_sleep(t_philo *data);
+
+void			go_think(t_philo *data);
 
 void	*manage_gathering(void *arg)
 {
@@ -29,10 +31,11 @@ void	*manage_gathering(void *arg)
 	data = (t_philo *) arg;
 	if (data->philo_nbr % 2 == 0)
 		data->state = SLEEPING;
-	while (!data->limits->start_time)
+	while (!get_sim_start(data))
 		usleep(1);
 	pthread_mutex_lock(data->mtx);
 	data->last_eat_start = data->limits->start_time;
+	data->start_time = data->limits->start_time;
 	pthread_mutex_unlock(data->mtx);
 	while (get_sim_state(data))
 	{
@@ -59,7 +62,7 @@ void	go_eat(t_philo *data)
 		data->last_eat_start = get_current_time();
 		data->meals_nbr++;
 		pthread_mutex_unlock(data->mtx);
-		usleep(data->limits->time_to_eat * 1000);
+		usleep(data->time_to_eat * 1000);
 		pthread_mutex_unlock(data->right);
 		pthread_mutex_unlock(data->left);
 	}
@@ -70,7 +73,7 @@ void	go_sleep(t_philo *data)
 {
 	print_log(data, "is sleeping");
 	data->last_sleep_start = get_current_time();
-	usleep(data->limits->time_to_sleep * 1000);
+	usleep(data->time_to_sleep * 1000);
 	data->state = THINKING;
 }
 
@@ -84,7 +87,7 @@ void	print_log(t_philo *data, char *msg)
 {
 	unsigned long	now;
 
-	now = get_current_time() - data->limits->start_time;
+	now = get_current_time() - data->start_time;
 	pthread_mutex_lock(data->mtx);
 	if (*data->sim_state)
 		printf("%lu %u %s\n", now, data->philo_nbr, msg);
