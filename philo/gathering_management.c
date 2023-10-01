@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 14:37:59 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/01 11:34:28 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/01 12:51:16 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,11 @@ void	go_eat(t_philo *data)
 		print_log(data, "has taken a fork");
 		pthread_mutex_lock(data->right);
 		print_log(data, "has taken a fork");
-		print_log(data, "is eating");
 		pthread_mutex_lock(data->mtx);
 		data->last_eat_start = get_current_time();
 		data->meals_nbr++;
 		pthread_mutex_unlock(data->mtx);
+		print_log(data, "is eating");
 		usleep(data->time_to_eat * 1000);
 		pthread_mutex_unlock(data->right);
 		pthread_mutex_unlock(data->left);
