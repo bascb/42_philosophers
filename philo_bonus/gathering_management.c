@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 14:37:59 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/01 12:51:16 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 13:53:47 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,18 +53,16 @@ void	go_eat(t_philo *data)
 {
 	if (data->nbr_of_philos > 1)
 	{
-		pthread_mutex_lock(data->left);
+		sem_wait(data->forks);
 		print_log(data, "has taken a fork");
-		pthread_mutex_lock(data->right);
+		sem_wait(data->forks);
 		print_log(data, "has taken a fork");
-		pthread_mutex_lock(data->mtx);
 		data->last_eat_start = get_current_time();
 		data->meals_nbr++;
-		pthread_mutex_unlock(data->mtx);
 		print_log(data, "is eating");
 		usleep(data->time_to_eat * 1000);
-		pthread_mutex_unlock(data->right);
-		pthread_mutex_unlock(data->left);
+		sem_post(data->forks);
+		sem_post(data->forks);
 	}
 	data->state = SLEEPING;
 }
@@ -88,8 +86,7 @@ void	print_log(t_philo *data, char *msg)
 	unsigned long	now;
 
 	now = get_current_time() - data->start_time;
-	pthread_mutex_lock(data->mtx);
+	sem_wait(data->print);
 	if (*data->sim_state)
 		printf("%lu %u %s\n", now, data->philo_nbr, msg);
-	pthread_mutex_unlock(data->mtx);
-}
+	sem_post(data->print);

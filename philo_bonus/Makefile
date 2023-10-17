@@ -1,4 +1,4 @@
-NAME = philo
+NAME = philo_bonus
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -g
 SRC = philosophers utils process_input check_input clean_memory gathering_management

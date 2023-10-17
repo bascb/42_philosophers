@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 17:24:04 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/01 10:21:44 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 13:51:20 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,13 @@ t_params	*clean_params(t_params *params)
 		free(params->limits);
 	if (params->forks)
 	{
-		i = 0;
-		while (i < params->nbr_of_philos)
-			pthread_mutex_destroy(&params->forks[i++]);
-		free(params->forks);
+		sem_close(params->forks);
+		sem_unlink("/forks");
+	}
+	if (params->print)
+	{
+		sem_close(params->print);
+		sem_unlink("/print");
 	}
 	if (params->philosophers)
 		free(params->philosophers);

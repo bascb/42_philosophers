@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/01 10:48:21 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 13:47:46 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 # include <string.h>
 # include <unistd.h>
 # include <sys/time.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <semaphore.h>
+# include <fcntl.h>
 # include <pthread.h>
 
 # define EATING 0
@@ -36,14 +40,13 @@ typedef struct s_philo
 {
 	unsigned int		philo_nbr;
 	unsigned int		state;
-	pthread_t			id;
-	pthread_mutex_t		*mtx;
+	pid_t				id;
 	void				*res;
 	unsigned int		nbr_of_philos;
+	sem_t				*forks;
+	sem_t				*print;
 	unsigned int		*sim_state;
 	t_limits			*limits;
-	pthread_mutex_t		*right;
-	pthread_mutex_t		*left;
 	unsigned long		start_time;
 	unsigned long		time_to_die;
 	unsigned long		time_to_eat;
@@ -59,7 +62,8 @@ typedef struct s_params
 	unsigned int		nbr_of_philos;
 	unsigned int		meals_nbr;
 	unsigned int		sim_state;
-	pthread_mutex_t		*forks;
+	sem_t				*forks;
+	sem_t				*print;
 	t_philo				*philosophers;
 	pthread_mutex_t		mtx;
 }					t_params;

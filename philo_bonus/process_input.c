@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/01 10:17:58 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 13:52:44 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,17 @@ int	get_limits(t_params *params, char **argv)
 int	create_philo_fork_arrays(t_params *params)
 {
 	params->philosophers = ft_calloc(params->nbr_of_philos, sizeof(t_philo));
-	params->forks = ft_calloc(params->nbr_of_philos, sizeof(pthread_mutex_t));
-	if (!params->philosophers || !params->forks)
+	if (!params->philosophers)
 	{
-		printf("Unable to alloc memory for forks or philosophers\n");
+		printf("Unable to alloc memory for philosophers\n");
+		clean_params(params);
+		return (0);
+	}
+	params->forks = sem_open("/forks", O_CREAT, 0, params->nbr_of_philos);
+	if (params->forks == SEM_FAILED)
+	{
+		printf("Unable to create semaphore for forks\n");
+		params->forks = NULL;
 		clean_params(params);
 		return (0);
 	}
@@ -75,8 +82,12 @@ t_params	*get_params(int argc, char **argv)
 		params->meals_nbr = ft_atou(argv[5]);
 	if (!create_philo_fork_arrays(params))
 		return (clean_params(params));
-	if (pthread_mutex_init(&params->mtx, NULL))
+	params->print = sem_open("/print", O_CREAT, 0, 1);
+	if (params->print == SEM_FAILED)
+	{
+		params->print = NULL;
 		return (clean_params(params));
+	}
 	return (params);
 }
 
@@ -89,13 +100,6 @@ void	set_philo_data(t_params *params, int i)
 	params->philosophers[i].time_to_die = params->limits->time_to_die;
 	params->philosophers[i].time_to_eat = params->limits->time_to_eat;
 	params->philosophers[i].time_to_sleep = params->limits->time_to_sleep;
-	if (params->nbr_of_philos > 1)
-	{
-		if (i + 1 == (int) params->nbr_of_philos)
-			params->philosophers[i].right = &params->forks[0];
-		else
-			params->philosophers[i].right = &params->forks[i + 1];
-		params->philosophers[i].left = &params->forks[i];
-	}
-	params->philosophers[i].mtx = &params->mtx;
+	params->philosophers[i].forks = params->forks;
+	params->philosophers[i].print = &params->print;
 }
