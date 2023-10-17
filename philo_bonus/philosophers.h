@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 13:47:46 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 22:23:44 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <semaphore.h>
 # include <fcntl.h>
 # include <pthread.h>
+# include <signal.h>
 
 # define EATING 0
 # define SLEEPING 1
@@ -41,10 +42,11 @@ typedef struct s_philo
 	unsigned int		philo_nbr;
 	unsigned int		state;
 	pid_t				id;
-	void				*res;
 	unsigned int		nbr_of_philos;
 	sem_t				*forks;
 	sem_t				*print;
+	sem_t				*init_time;
+	sem_t				*dead;
 	unsigned int		*sim_state;
 	t_limits			*limits;
 	unsigned long		start_time;
@@ -64,8 +66,9 @@ typedef struct s_params
 	unsigned int		sim_state;
 	sem_t				*forks;
 	sem_t				*print;
+	sem_t				*init_time;
+	sem_t				*dead;
 	t_philo				*philosophers;
-	pthread_mutex_t		mtx;
 }					t_params;
 
 void			create_philosophers(t_params *params);
@@ -89,8 +92,6 @@ t_params		*clean_params(t_params *params);
 unsigned int	ft_atou(const char *num_str);
 
 unsigned long	ft_atoul(const char *num_str);
-
-int				is_alive(unsigned long last_meal, unsigned long time_to_die);
 
 void			print_log(t_philo *data, char *msg);
 

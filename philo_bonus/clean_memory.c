@@ -6,63 +6,43 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 17:24:04 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 13:51:20 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 22:33:07 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
+void	del_sem(sem_t *sem, char *name);
+
 t_params	*clean_params(t_params *params)
 {
-	unsigned int	i;
-
 	if (params->limits)
 		free(params->limits);
-	if (params->forks)
-	{
-		sem_close(params->forks);
-		sem_unlink("/forks");
-	}
-	if (params->print)
-	{
-		sem_close(params->print);
-		sem_unlink("/print");
-	}
+	del_sem(params->forks, "/forks");
+	del_sem(params->print, "/print");
+	del_sem(params->init_time, "/time");
+	del_sem(params->dead, "/dead");
 	if (params->philosophers)
 		free(params->philosophers);
-	pthread_mutex_destroy(&params->mtx);
 	free(params);
 	return (NULL);
 }
 
-int	is_alive(unsigned long last_meal, unsigned long time_to_die)
+void	del_sem(sem_t *sem, char *name)
 {
-	return (!check_timeout(last_meal, time_to_die));
+	if (sem && sem != SEM_FAILED)
+	{
+		sem_close(sem);
+		sem_unlink(name);
+	}
 }
 
-int	get_sim_state(t_philo *data)
+void	print_log(t_philo *data, char *msg)
 {
-	int	state;
+	unsigned long	now;
 
-	pthread_mutex_lock(data->mtx);
-	state = *data->sim_state;
-	pthread_mutex_unlock(data->mtx);
-	return (state);
-}
-
-void	set_sim_state(t_philo *data, int state)
-{
-	pthread_mutex_lock(data->mtx);
-	*data->sim_state = state;
-	pthread_mutex_unlock(data->mtx);
-}
-
-unsigned long	get_sim_start(t_philo *data)
-{
-	unsigned long	start;
-
-	pthread_mutex_lock(data->mtx);
-	start = data->limits->start_time;
-	pthread_mutex_unlock(data->mtx);
-	return (start);
+	now = get_current_time() - data->start_time;
+	sem_wait(data->print);
+	printf("%lu %u %s\n", now, data->philo_nbr, msg);
+	sem_post(data->print);
 }

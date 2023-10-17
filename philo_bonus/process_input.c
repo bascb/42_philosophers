@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 13:52:44 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 22:13:53 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ int	create_philo_fork_arrays(t_params *params)
 	if (params->forks == SEM_FAILED)
 	{
 		printf("Unable to create semaphore for forks\n");
-		params->forks = NULL;
 		clean_params(params);
 		return (0);
 	}
@@ -84,10 +83,13 @@ t_params	*get_params(int argc, char **argv)
 		return (clean_params(params));
 	params->print = sem_open("/print", O_CREAT, 0, 1);
 	if (params->print == SEM_FAILED)
-	{
-		params->print = NULL;
 		return (clean_params(params));
-	}
+	params->init_time = sem_open("/time", O_CREAT, 0, 0);
+	if (params->init_time == SEM_FAILED)
+		return (clean_params(params));
+	params->dead = sem_open("/dead", O_CREAT, 0, 0);
+	if (params->dead == SEM_FAILED)
+		return (clean_params(params));
 	return (params);
 }
 
@@ -101,5 +103,7 @@ void	set_philo_data(t_params *params, int i)
 	params->philosophers[i].time_to_eat = params->limits->time_to_eat;
 	params->philosophers[i].time_to_sleep = params->limits->time_to_sleep;
 	params->philosophers[i].forks = params->forks;
-	params->philosophers[i].print = &params->print;
+	params->philosophers[i].print = params->print;
+	params->philosophers[i].init_time = params->init_time;
+	params->philosophers[i].dead = params->dead;
 }

@@ -6,47 +6,43 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 14:37:59 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 13:53:47 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 22:57:00 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int				get_sim_state(t_philo *data);
+void	go_eat(t_philo *data);
 
-void			set_sim_state(t_philo *data, int state);
+void	go_sleep(t_philo *data);
 
-unsigned long	get_sim_start(t_philo *data);
+void	go_think(t_philo *data);
 
-void			go_eat(t_philo *data);
-
-void			go_sleep(t_philo *data);
-
-void			go_think(t_philo *data);
+void	*check_dead(void *arg);
 
 void	*manage_gathering(void *arg)
 {
-	t_philo			*data;
+	t_philo		*data;
+	pthread_t	tid;
 
 	data = (t_philo *) arg;
 	if (data->philo_nbr % 2 == 0)
 		data->state = SLEEPING;
-	while (!get_sim_start(data))
-		usleep(1);
-	pthread_mutex_lock(data->mtx);
-	data->last_eat_start = data->limits->start_time;
-	data->start_time = data->limits->start_time;
-	pthread_mutex_unlock(data->mtx);
-	while (get_sim_state(data))
+	sem_wait(data->init_time);
+	data->start_time = get_current_time();
+	data->last_eat_start = data->start_time;
+	sem_post(data->init_time);
+	pthread_create(&tid, NULL, check_dead, data);
+	while (1)
 	{
-		if (data->state == THINKING && get_sim_state(data))
+		if (data->state == THINKING)
 			go_think(data);
-		if (data->state == EATING && get_sim_state(data))
+		if (data->state == EATING)
 			go_eat(data);
-		if (data->state == SLEEPING && get_sim_state(data))
+		if (data->state == SLEEPING)
 			go_sleep(data);
 	}
-	return ((void *)(long)data->philo_nbr);
+	exit(0);
 }
 
 void	go_eat(t_philo *data)
@@ -81,12 +77,19 @@ void	go_think(t_philo *data)
 	data->state = EATING;
 }
 
-void	print_log(t_philo *data, char *msg)
+void	*check_dead(void *arg)
 {
-	unsigned long	now;
+	t_philo			*data;
 
-	now = get_current_time() - data->start_time;
-	sem_wait(data->print);
-	if (*data->sim_state)
-		printf("%lu %u %s\n", now, data->philo_nbr, msg);
-	sem_post(data->print);
+	data = (t_philo *) arg;
+	while (1)
+	{
+		usleep(1000);
+		if (check_timeout(data->last_eat_start, data->time_to_die))
+		{
+			print_log(data, "died");
+			sem_post(data->dead);
+			exit(0);
+		}
+	}
+}

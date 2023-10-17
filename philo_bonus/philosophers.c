@@ -6,13 +6,13 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/01 11:51:21 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/17 22:31:27 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	stop_simulation(t_params *params);
+void	kill_childs(t_params *params);
 
 int	main(int argc, char **argv)
 {
@@ -35,69 +35,45 @@ int	main(int argc, char **argv)
 void	create_philosophers(t_params *params)
 {
 	unsigned int	i;
+	pid_t			id;
 
-	i = 0;
-	while (i < params->nbr_of_philos)
-		pthread_mutex_init(&params->forks[i++], NULL);
 	i = 0;
 	while (i < params->nbr_of_philos)
 		set_philo_data(params, i++);
 	i = 0;
 	while (i < params->nbr_of_philos)
 	{
-		pthread_create(&params->philosophers[i].id, NULL,
-			manage_gathering, &params->philosophers[i]);
+		id = fork();
+		if (id == -1)
+		{
+			kill_childs(params);
+			clean_params(params);
+			exit(1);
+		}
+		if (id == 0)
+			manage_gathering(&params->philosophers[i]);
+		else
+			params->philosophers[i].id = id;
 		i++;
 	}
-	pthread_mutex_lock(&params->mtx);
-	params->sim_state = 1;
-	params->limits->start_time = get_current_time();
-	pthread_mutex_unlock(&params->mtx);
+	sem_post(params->init_time);
 }
 
 void	control_simulation(t_params *params)
 {
-	unsigned int	i;
-	int				stop_sim;
-
-	stop_sim = 0;
-	while (!stop_sim)
-	{
-		usleep(1000);
-		stop_sim = stop_simulation(params);
-	}
-	pthread_mutex_lock(&params->mtx);
-	params->sim_state = 0;
-	pthread_mutex_unlock(&params->mtx);
-	i = -1;
-	while (++i < params->nbr_of_philos)
-		pthread_join(params->philosophers[i].id, params->philosophers[i].res);
+	sem_wait(params->dead);
+	kill_childs(params);
 }
 
-int	stop_simulation(t_params *params)
+void	kill_childs(t_params *params)
 {
 	unsigned int	i;
-	unsigned int	meals_completed;
-	unsigned int	meals_nbr;
-	unsigned long	last_eat;
 
-	meals_completed = 0;
-	if (params->meals_nbr)
-		meals_completed = 1;
-	i = -1;
-	while (++i < params->nbr_of_philos)
+	i = 0;
+	while (i < params->nbr_of_philos)
 	{
-		pthread_mutex_lock(&params->mtx);
-		last_eat = params->philosophers[i].last_eat_start;
-		meals_nbr = params->philosophers[i].meals_nbr;
-		pthread_mutex_unlock(&params->mtx);
-		if (!is_alive(last_eat, params->limits->time_to_die))
-		{
-			print_log(&params->philosophers[i], "died");
-			return (1);
-		}
-		if (params->meals_nbr && meals_nbr < params->meals_nbr)
-			meals_completed = 0;
+		if (params->philosophers[i].id)
+			kill(params->philosophers[i].id, 9);
+		i++;
 	}
-	return (meals_completed);
 }
