@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:19:02 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 22:23:44 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/18 19:58:31 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_philo
 	sem_t				*print;
 	sem_t				*init_time;
 	sem_t				*dead;
+	sem_t				*meals_completed;
 	unsigned int		*sim_state;
 	t_limits			*limits;
 	unsigned long		start_time;
@@ -55,6 +56,7 @@ typedef struct s_philo
 	unsigned long		time_to_sleep;
 	unsigned long		last_eat_start;
 	unsigned long		last_sleep_start;
+	unsigned int		min_meals;
 	unsigned int		meals_nbr;
 }						t_philo;
 
@@ -68,6 +70,7 @@ typedef struct s_params
 	sem_t				*print;
 	sem_t				*init_time;
 	sem_t				*dead;
+	sem_t				*meals_completed;
 	t_philo				*philosophers;
 }					t_params;
 
@@ -84,6 +87,8 @@ int				check_timeout(unsigned long start, unsigned long timeout);
 void			*ft_calloc(size_t nmemb, size_t size);
 
 t_params		*get_params(int argc, char **argv);
+
+int				create_semaphores(t_params *params);
 
 void			set_philo_data(t_params *params, int i);
 

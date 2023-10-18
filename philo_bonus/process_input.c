@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 11:51:38 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 22:13:53 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/18 19:59:14 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,8 @@ t_params	*get_params(int argc, char **argv)
 		params->meals_nbr = ft_atou(argv[5]);
 	if (!create_philo_fork_arrays(params))
 		return (clean_params(params));
-	params->print = sem_open("/print", O_CREAT, 0, 1);
-	if (params->print == SEM_FAILED)
-		return (clean_params(params));
-	params->init_time = sem_open("/time", O_CREAT, 0, 0);
-	if (params->init_time == SEM_FAILED)
-		return (clean_params(params));
-	params->dead = sem_open("/dead", O_CREAT, 0, 0);
-	if (params->dead == SEM_FAILED)
-		return (clean_params(params));
+	if (!create_semaphores(params))
+		return (NULL);
 	return (params);
 }
 
@@ -106,4 +99,6 @@ void	set_philo_data(t_params *params, int i)
 	params->philosophers[i].print = params->print;
 	params->philosophers[i].init_time = params->init_time;
 	params->philosophers[i].dead = params->dead;
+	params->philosophers[i].meals_completed = params->meals_completed;
+	params->philosophers[i].min_meals = params->meals_nbr;
 }

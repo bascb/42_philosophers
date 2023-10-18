@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 17:24:04 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 22:33:07 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/18 19:53:42 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ t_params	*clean_params(t_params *params)
 	del_sem(params->print, "/print");
 	del_sem(params->init_time, "/time");
 	del_sem(params->dead, "/dead");
+	del_sem(params->meals_completed, "/meals");
 	if (params->philosophers)
 		free(params->philosophers);
 	free(params);

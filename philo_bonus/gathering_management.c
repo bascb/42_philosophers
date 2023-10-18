@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 14:37:59 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/17 22:57:00 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/18 20:00:09 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void	go_eat(t_philo *data)
 		print_log(data, "has taken a fork");
 		data->last_eat_start = get_current_time();
 		data->meals_nbr++;
+		if (data->meals_nbr == data->min_meals)
+			sem_post(data->meals_completed);
 		print_log(data, "is eating");
 		usleep(data->time_to_eat * 1000);
 		sem_post(data->forks);

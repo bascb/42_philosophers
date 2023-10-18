@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 17:03:49 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/09/28 07:52:50 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/18 19:55:22 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,35 @@ int	check_params(int argc, char **argv)
 		i++;
 	}
 	return (0);
+}
+
+int	create_semaphores(t_params *params)
+{
+	params->print = sem_open("/print", O_CREAT, 0, 1);
+	if (params->print == SEM_FAILED)
+	{
+		clean_params(params);
+		return (0);
+	}
+	params->init_time = sem_open("/time", O_CREAT, 0, 0);
+	if (params->init_time == SEM_FAILED)
+	{
+		clean_params(params);
+		return (0);
+	}
+	params->dead = sem_open("/dead", O_CREAT, 0, 0);
+	if (params->dead == SEM_FAILED)
+	{
+		clean_params(params);
+		return (0);
+	}
+	params->meals_completed = sem_open("/meals", O_CREAT, 0, 0);
+	if (params->meals_completed == SEM_FAILED)
+	{
+		clean_params(params);
+		return (0);
+	}
+	return (1);
 }
 
 void	print_help(char **argv)
