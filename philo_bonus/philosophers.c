@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 14:32:40 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/18 22:13:25 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/19 12:43:16 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	create_philosophers(t_params *params)
 		else
 			params->philosophers[i].id = id;
 		i++;
+		usleep(100);
 	}
 	sem_post(params->init_time);
 }

@@ -6,7 +6,7 @@
 /*   By: bcastelo <bcastelo@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 14:37:59 by bcastelo          #+#    #+#             */
-/*   Updated: 2023/10/18 20:00:09 by bcastelo         ###   ########.fr       */
+/*   Updated: 2023/10/19 13:17:42 by bcastelo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	*manage_gathering(void *arg)
 	data->last_eat_start = data->start_time;
 	sem_post(data->init_time);
 	pthread_create(&tid, NULL, check_dead, data);
+	pthread_detach(tid);
 	while (1)
 	{
 		if (data->state == THINKING)
@@ -77,6 +78,7 @@ void	go_think(t_philo *data)
 {
 	print_log(data, "is thinking");
 	data->state = EATING;
+	usleep(500);
 }
 
 void	*check_dead(void *arg)
